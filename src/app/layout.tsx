@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import Script from "next/script";
+
+import { Wrapper } from "../components/common";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -18,10 +19,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<head>
-				<Script src="https://sdk.amazonaws.com/js/aws-sdk-2.1555.0.min.js"></Script>
-			</head>
-			<body className={montserrat.className}>{children}</body>
+			<head></head>
+			<body className={montserrat.className}>
+				<Wrapper className="bg-white p-6 h-screen">{children}</Wrapper>
+			</body>
 		</html>
 	);
 }
