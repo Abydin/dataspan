@@ -1,5 +1,5 @@
 "use client";
-
+import { Suspense } from "react";
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -30,7 +30,7 @@ export default function DashboardTabs({}: Props) {
 	const pathname = usePathname();
 	const tab = useSearchParams().get("tab") ?? "/";
 	return (
-		<>
+		<Suspense>
 			{tabs.map(({ label, value }, idx) => (
 				<Link
 					className={classNames(
@@ -47,6 +47,6 @@ export default function DashboardTabs({}: Props) {
 					{label}
 				</Link>
 			))}
-		</>
+		</Suspense>
 	);
 }

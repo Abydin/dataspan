@@ -7,34 +7,11 @@ import ImageCard from "../components/modules/ImageCard";
 import { GlobalModals } from "../components/GlobalModal";
 import { useEffect, useState } from "react";
 import { getRandomColor, listAlbums, viewAlbums } from "../utils";
-import Link from "next/link";
-import classNames from "classnames";
-import { usePathname, useSearchParams } from "next/navigation";
-
-const tabs = [
-	{
-		label: "All groups",
-		value: "/",
-	},
-	{
-		label: "Train",
-		value: "train",
-	},
-	{
-		label: "Value",
-		value: "value",
-	},
-	{
-		label: "Test",
-		value: "test",
-	},
-];
+import DashboardTabs from "../components/modules/DashboardTabs";
 
 export default function Home() {
 	const [albumName, setAlbumName] = useState<string | undefined>();
 	const [albums, setAlbums] = useState([]);
-	const pathname = usePathname();
-	const tab = useSearchParams().get("tab") ?? "/";
 
 	useEffect(() => {
 		const fetchAlbums = async () => {
@@ -163,22 +140,7 @@ export default function Home() {
 							</div>
 						</div>
 						<div className="sticky flex mb-6">
-							{tabs.map(({ label, value }, idx) => (
-								<Link
-									className={classNames(
-										"block w-max flex-shrink-0  px-6 py-2 text-sm font-medium leading-5 ",
-										{
-											"": tab !== value,
-											" border-b-2 border-b-[#F2CC58] text-[#F2CC58] bg-[#F2CC58]/10":
-												tab === value,
-										}
-									)}
-									href={`${pathname}?tab=${value}`}
-									key={value}
-								>
-									{label}
-								</Link>
-							))}
+							<DashboardTabs />
 						</div>
 						<div className="grid grid-cols-3  lg:grid-cols-9 gap-2">
 							{Array.from(Array(54).keys()).map((_, index) => (
