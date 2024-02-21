@@ -7,12 +7,34 @@ import ImageCard from "../components/modules/ImageCard";
 import { GlobalModals } from "../components/GlobalModal";
 import { useEffect, useState } from "react";
 import { getRandomColor, listAlbums, viewAlbums } from "../utils";
+import Link from "next/link";
+import classNames from "classnames";
+import { usePathname, useSearchParams } from "next/navigation";
 
-import DashboardTabs from "../components/modules/DashboardTabs";
+const tabs = [
+	{
+		label: "All groups",
+		value: "/",
+	},
+	{
+		label: "Train",
+		value: "train",
+	},
+	{
+		label: "Value",
+		value: "value",
+	},
+	{
+		label: "Test",
+		value: "test",
+	},
+];
 
 export default function Home() {
 	const [albumName, setAlbumName] = useState<string | undefined>();
 	const [albums, setAlbums] = useState([]);
+	const pathname = usePathname();
+	const tab = useSearchParams().get("tab") ?? "/";
 
 	useEffect(() => {
 		const fetchAlbums = async () => {
@@ -73,8 +95,6 @@ export default function Home() {
 		},
 	];
 
-	console.log({ albums });
-
 	return (
 		<main className="min-h-screen ">
 			<div className="grid gap-x-10  lg:grid-cols-4 lg:px-8">
@@ -87,12 +107,12 @@ export default function Home() {
 							<h2 className=" font-semibold text-sm">Classes filter</h2>
 						</div>
 						<div className="flex gap-x-4 mb-4">
-							<h2 className="font-normal text-sm leading-[14.63px] text-[#D1D1D6]">
+							<button className="font-normal text-sm leading-[14.63px] text-[#D1D1D6]">
 								Select all
-							</h2>
-							<h2 className="font-normal text-sm leading-[14.63px] text-[#2081D2]">
+							</button>
+							<button className="font-normal text-sm leading-[14.63px] text-[#2081D2]">
 								Deselect all
-							</h2>
+							</button>
 						</div>
 						<div className="flex flex-wrap gap-3 mb-5">
 							{bones.map(({ name, color }) => (
@@ -118,12 +138,12 @@ export default function Home() {
 							</div>
 						</div>
 						<div className="flex items-center mt-4 justify-between">
-							<div className="text-xs font-semibold">
+							<button className="text-xs font-semibold">
 								<BinIcon className="inline-block mr-1" />
 								Clear Filters
-							</div>
+							</button>
 
-							<span className=" text-black/50 text-xs">Need help?</span>
+							<button className=" text-black/50 text-xs">Need help?</button>
 						</div>
 					</div>
 				</div>
@@ -143,7 +163,22 @@ export default function Home() {
 							</div>
 						</div>
 						<div className="sticky flex mb-6">
-							<DashboardTabs />
+							{tabs.map(({ label, value }, idx) => (
+								<Link
+									className={classNames(
+										"block w-max flex-shrink-0  px-6 py-2 text-sm font-medium leading-5 ",
+										{
+											"": tab !== value,
+											" border-b-2 border-b-[#F2CC58] text-[#F2CC58] bg-[#F2CC58]/10":
+												tab === value,
+										}
+									)}
+									href={`${pathname}?tab=${value}`}
+									key={value}
+								>
+									{label}
+								</Link>
+							))}
 						</div>
 						<div className="grid grid-cols-3  lg:grid-cols-9 gap-2">
 							{Array.from(Array(54).keys()).map((_, index) => (

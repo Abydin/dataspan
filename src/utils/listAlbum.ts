@@ -4,7 +4,7 @@ export const listAlbums = async () => {
 	try {
 		const data: any = await s3
 			.listObjects({
-				Delimiter: "/train/images/",
+				Delimiter: "train",
 				Bucket: "dataspan.frontend-home-assignment",
 			})
 			.promise();
