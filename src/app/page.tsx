@@ -158,7 +158,11 @@ export default function Home() {
 							{albums
 								.slice(startIndex, startIndex + 54)
 								?.map(({ photoKey, photoUrl }) => (
-									<ImageCard key={photoKey} photoUrl={photoUrl} />
+									<ImageCard
+										key={photoKey}
+										photoUrl={photoUrl}
+										name={photoKey}
+									/>
 								))}
 						</div>
 						<div className="flex justify-center mb-5">
