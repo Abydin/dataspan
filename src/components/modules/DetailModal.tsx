@@ -12,7 +12,7 @@ export default function DetailModal({
 }) {
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} className="">
-			<div className="p-5">
+			<div className="p-5 overflow-hidden">
 				<h3 className="text-sm leading-4">
 					Fingers 3 positive image 330909 active.jpg
 				</h3>

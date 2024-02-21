@@ -63,7 +63,7 @@ export const Modal = ({
 									X
 								</button>
 								<div>{header}</div>
-								<div className="h-max max-h-full overflow-scroll">
+								<div className="h-max max-h-full overflow-hidden">
 									{children}
 								</div>
 							</Dialog.Panel>

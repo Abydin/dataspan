@@ -8,18 +8,24 @@ import { GlobalModals } from "../components/GlobalModal";
 import { useEffect, useState } from "react";
 import { getRandomColor, listAlbums, viewAlbums } from "../utils";
 import DashboardTabs from "../components/modules/DashboardTabs";
+import { Pagination } from "@ui";
 
 export default function Home() {
 	const [albumName, setAlbumName] = useState<string | undefined>();
 	const [albums, setAlbums] = useState([]);
+	const [pageCount, setPageCount] = useState(1);
+	const [loading, setLoading] = useState(false);
+	const startIndex = (pageCount - 1) * 54;
 
 	useEffect(() => {
+		setLoading(true);
 		const fetchAlbums = async () => {
 			try {
 				const val: string | undefined = await listAlbums();
 				setAlbumName(val);
 			} catch (error) {
 				console.error("Error fetching albums:", error);
+				setLoading(false);
 			}
 		};
 
@@ -32,8 +38,10 @@ export default function Home() {
 				try {
 					const val = await viewAlbums(albumName);
 					setAlbums(val);
+					setLoading(false);
 				} catch (error) {
 					console.error("Error fetching album data:", error);
+					setLoading(false);
 				}
 			}
 		};
@@ -124,28 +132,42 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
-				<div className="lg:col-span-3">
-					<div className="flex flex-col">
-						<div className="flex flex-col justify-between mb-12">
+				<div className="lg:col-span-3 ">
+					<div className="flex flex-col ">
+						<div className="flex flex-col justify-between mb-12 ">
 							<div className="flex justify-between items-baseline">
 								<h1 className=" text-[32px] leading-10 font-semibold">
 									Bone-fracture-detection
 								</h1>
 								<div className="flex gap-x-1.5 text-base leading-5 font-bold">
-									<span>54</span>
+									<span>
+										{54 * pageCount > albums.length
+											? albums.length
+											: 54 * pageCount}
+									</span>
 									<span className="font-normal text-[#586A78]">0f</span>
 									<span>{albums?.length || 0}</span>
 									<span className="font-normal text-[#586A78]">images</span>
 								</div>
 							</div>
 						</div>
-						<div className="sticky flex mb-6">
+						<div className=" flex mb-6">
 							<DashboardTabs />
 						</div>
-						<div className="grid grid-cols-3  lg:grid-cols-9 gap-2">
-							{Array.from(Array(54).keys()).map((_, index) => (
-								<ImageCard key={index} />
-							))}
+						<div className="grid grid-cols-3  lg:grid-cols-9 gap-2 mb-6">
+							{albums
+								.slice(startIndex, startIndex + 54)
+								?.map(({ photoKey, photoUrl }) => (
+									<ImageCard key={photoKey} photoUrl={photoUrl} />
+								))}
+						</div>
+						<div className="flex justify-center mb-5">
+							<Pagination
+								isLoading={loading}
+								pageCount={Math.ceil(albums.length / 54) || 1}
+								onPageChange={(val) => setPageCount(val)}
+								page={pageCount}
+							/>
 						</div>
 					</div>
 				</div>
