@@ -18,6 +18,10 @@ export default function Home() {
 	const startIndex = (pageCount - 1) * 54;
 
 	useEffect(() => {
+		alert("I used 6 hrs 30 mins");
+	}, []);
+
+	useEffect(() => {
 		setLoading(true);
 		const fetchAlbums = async () => {
 			try {
@@ -134,6 +138,11 @@ export default function Home() {
 				</div>
 				<div className="lg:col-span-3 ">
 					<div className="flex flex-col ">
+						{loading && (
+							<div className="h-screen flex justify-center items-center">
+								<div className="h-10 w-10 animate-spin rounded-full border-2 border-[grey] border-t-white m-auto" />
+							</div>
+						)}
 						<div className="flex flex-col justify-between mb-12 ">
 							<div className="flex justify-between items-baseline">
 								<h1 className=" text-[32px] leading-10 font-semibold">

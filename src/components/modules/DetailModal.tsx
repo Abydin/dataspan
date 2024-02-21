@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Pill } from "@ui";
 
-type Props = {};
-
 export default function DetailModal({
 	isOpen,
 	onClose,
