@@ -58,16 +58,17 @@ const PolygonOnImage = ({
 const DetailModal = ({
 	isOpen,
 	onClose,
-	photoUrl = "",
-	coordinates,
-	classes = "",
+	defaultValue,
 }: {
 	isOpen: boolean;
 	onClose: () => void;
-	photoUrl?: string;
-	coordinates: { x: number; y: number }[];
-	classes?: string;
+	defaultValue?: {
+		photoUrl?: string;
+		coordinates: { x: number; y: number }[];
+		classes?: string;
+	};
 }) => {
+	const { photoUrl = "", coordinates, classes = "" } = defaultValue || {};
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} className="">
 			{isOpen && (

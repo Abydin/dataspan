@@ -59,9 +59,11 @@ export const ImageCard = ({ photoUrl, coordinates, classes }: Props) => {
 			height={100}
 			onClick={() =>
 				openModal(ModalTypes.DETAIL_MODAL, {
-					photoUrl,
-					coordinates,
-					classes,
+					defaultValue: {
+						photoUrl,
+						coordinates,
+						classes,
+					},
 				})
 			}
 		/>
