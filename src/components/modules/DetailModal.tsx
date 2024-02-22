@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { Modal, Pill } from "../common";
+import React, { useEffect, useRef } from "react";
+import { Modal, Pill } from "@ui";
 import { bones } from "./SideCard";
 
 const DetailModal = ({
@@ -11,55 +11,60 @@ const DetailModal = ({
 }: {
 	isOpen: boolean;
 	onClose: () => void;
+
 	photoUrl: string;
 	coordinates: { x: number; y: number }[];
 	classes: string;
 }) => {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const canvasRef = useRef(null);
 
+	const canvas: any = canvasRef.current;
 	useEffect(() => {
-		const canvas = canvasRef.current;
 		if (!canvas) {
 			console.error("Canvas element is not initialized");
 			return;
 		}
+		console.log({ canvas });
 
-		const ctx = canvas.getContext("2d");
+		const ctx = canvas?.getContext("2d");
 		if (!ctx) {
 			console.error("Canvas context is not initialized");
 			return;
 		}
-
 		console.log("Canvas initialized:", canvas);
 		console.log("Canvas context initialized:", ctx);
 
-		const image = new Image();
+		const image = new Image(100, 100) as HTMLImageElement; // Remove width and height parameters
 		image.onload = () => {
-			console.log("Image loaded:", image);
-			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+			ctx?.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-			ctx.beginPath();
-			coordinates.forEach((coord, index) => {
-				const x = coord.x * canvas.width;
-				const y = coord.y * canvas.height;
-				if (index === 0) {
-					ctx.moveTo(x, y);
-				} else {
-					ctx.lineTo(x, y);
+			if (coordinates.length) {
+				ctx.beginPath();
+				ctx.moveTo(
+					coordinates[0].x * canvas.width,
+					coordinates[0].y * canvas.height
+				);
+
+				for (let i = 1; i < coordinates.length; i++) {
+					ctx.lineTo(
+						coordinates[i].x * canvas.width,
+						coordinates[i].y * canvas.height
+					);
 				}
-			});
-			ctx.closePath();
-			ctx.strokeStyle = "red";
-			ctx.lineWidth = 2;
-			ctx.stroke();
+				ctx?.closePath();
+				ctx.strokeStyle = bones.find(
+					(x) => x.classes === Number(classes)
+				)?.color;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+			}
 		};
-
 		image.onerror = () => {
 			console.error("Failed to load the image");
 		};
 
 		image.src = photoUrl;
-	}, [canvasRef, photoUrl, coordinates]);
+	}, [photoUrl, coordinates, classes]);
 
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} className="">
@@ -81,12 +86,7 @@ const DetailModal = ({
 					</div>
 				</div>
 
-				<canvas
-					ref={canvasRef}
-					className="w-full h-96 bg-black"
-					width={800} // Set the width of the canvas
-					height={600} // Set the height of the canvas
-				/>
+				<img className="w-full h-96" src={photoUrl} />
 			</div>
 		</Modal>
 	);
