@@ -1,8 +1,8 @@
 "use client";
 
-import ImageCard from "../components/modules/ImageCard";
+import { ImageCard } from "../components/modules/ImageCard";
 import { GlobalModals } from "../components/GlobalModal";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DashboardTabs from "../components/modules/DashboardTabs";
 import { Pagination } from "@ui";
 import { useAlbums } from "../hooks";
@@ -11,9 +11,21 @@ import { useSearchParams } from "next/navigation";
 
 export default function Home() {
 	const tab = useSearchParams().get("tab") ?? "";
+	const polygon = useSearchParams().get("polygon") ?? 4;
 	const { albums, loading } = useAlbums(tab);
 	const [pageCount, setPageCount] = useState(1);
 	const startIndex = (pageCount - 1) * 54;
+
+	const getCordinates = useCallback((val: string[]) => {
+		const newPoly = val.slice(1); // Remove the first index
+		const coordinates = [];
+		for (let i = 0; i < newPoly.length; i += 2) {
+			const x = parseFloat(newPoly[i]);
+			const y = parseFloat(newPoly[i + 1]);
+			coordinates.push({ x, y });
+		}
+		return coordinates;
+	}, []);
 
 	return (
 		<main className="min-h-screen ">
@@ -52,11 +64,12 @@ export default function Home() {
 								<div className="grid grid-cols-3  lg:grid-cols-9 gap-2 mb-6">
 									{albums
 										?.slice(startIndex, startIndex + 54)
-										?.map(({ photoKey, photoUrl }) => (
+										?.map(({ photoKey, photoUrl, photoText, classes }: any) => (
 											<ImageCard
 												key={photoKey}
 												photoUrl={photoUrl}
-												name={photoKey}
+												coordinates={getCordinates(photoText)}
+												classes={classes}
 											/>
 										))}
 								</div>

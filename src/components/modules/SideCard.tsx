@@ -1,45 +1,59 @@
-import React, { useMemo } from "react";
-import { getRandomColor } from "@util";
+"use client";
+
+import React, { useCallback, useMemo } from "react";
+
 import Image from "next/image";
 import { Pill } from "@ui";
 import { BinIcon } from "../icons";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Props = {};
 
+export const bones = [
+	{
+		name: "Elbow positive",
+		color: "#3D9BE9",
+		classes: 0,
+	},
+	{
+		name: "Finger positive",
+		color: "#BADA55",
+		classes: 1,
+	},
+	{
+		name: "Humerus",
+		color: "#2CE1CB",
+		classes: 2,
+	},
+	{
+		name: "Forearm fracture",
+		color: "#FFD75C",
+		classes: 3,
+	},
+	{
+		name: "Humerus fracture",
+		color: "#F25858",
+		classes: 4,
+	},
+	{
+		name: "Shoulder fracture",
+		color: "#F25858",
+		classes: 5,
+	},
+	{
+		name: "Wrist positive",
+		color: "#D783FF",
+		classes: 6,
+	},
+];
+
 export default function SideCard({}: Props) {
-	const bones = useMemo(
-		() => [
-			{
-				name: "Elbow positive",
-				color: getRandomColor(),
-			},
-			{
-				name: "Finger positive",
-				color: getRandomColor(),
-			},
-			{
-				name: "Humerus",
-				color: getRandomColor(),
-			},
-			{
-				name: "Forearm fracture",
-				color: getRandomColor(),
-			},
-			{
-				name: "Humerus fracture",
-				color: getRandomColor(),
-			},
-			{
-				name: "Shoulder fracture",
-				color: getRandomColor(),
-			},
-			{
-				name: "Wrist positive",
-				color: getRandomColor(),
-			},
-		],
-		[]
-	);
+	const searchParams = useSearchParams().get("polygon") ?? 4;
+	const classe = useSearchParams().get("class");
+
+	const router = useRouter();
+
 	return (
 		<div className="sticky top-8 h-[calc(100vh-4rem)] flex flex-col">
 			<div className="h-16 w-60 relative mb-8">
@@ -52,15 +66,23 @@ export default function SideCard({}: Props) {
 				<button className="font-normal text-sm leading-[14.63px] text-[#D1D1D6]">
 					Select all
 				</button>
-				<button className="font-normal text-sm leading-[14.63px] text-[#2081D2]">
-					Deselect all
-				</button>
+				<Link href="/">
+					<button className="font-normal text-sm leading-[14.63px] text-[#2081D2]">
+						Deselect all
+					</button>
+				</Link>
 			</div>
 			<div className="flex flex-wrap gap-3 mb-5">
-				{bones.map(({ name, color }) => (
-					<Pill key={name} color={color} className={`!text-[${color}]`}>
-						{name}
-					</Pill>
+				{bones.map(({ name, color, classes }) => (
+					<Link key={name} href={`?class=${classes}`}>
+						<Pill
+							active={classe !== null && Number(classe) === classes}
+							color={color}
+							className={`!text-[${color}]`}
+						>
+							{name}
+						</Pill>
+					</Link>
 				))}
 			</div>
 			<div className="mb-4">
@@ -76,14 +98,21 @@ export default function SideCard({}: Props) {
 					</span>
 				</div>
 				<div className="w-full mt-2">
-					<input type="range" className="w-full" min={0} max={4} />
+					<input
+						defaultValue={searchParams}
+						type="range"
+						className="w-full"
+						min={0}
+						max={4}
+						onChange={(e) => router.push(`?polygon=${e.target.value}`)}
+					/>
 				</div>
 			</div>
 			<div className="flex items-center mt-4 justify-between">
-				<button className="text-xs font-semibold">
+				<Link href="/" className="text-xs font-semibold">
 					<BinIcon className="inline-block mr-1" />
 					Clear Filters
-				</button>
+				</Link>
 
 				<button className=" text-black/50 text-xs">Need help?</button>
 			</div>

@@ -6,10 +6,9 @@ import classNames from "classnames";
 type Props = {
 	isOpen: boolean;
 	children: ReactNode;
-	onClose?: () => void;
+	onClose: () => void;
 	className?: string;
 	header?: ReactNode;
-	reset?: () => void;
 };
 
 export const Modal = ({
@@ -18,15 +17,10 @@ export const Modal = ({
 	children,
 	className,
 	header,
-	reset,
 }: Props) => {
-	const handleClose = () => {
-		if (typeof reset === "function") reset();
-		if (typeof onClose === "function") onClose();
-	};
 	return (
 		<Transition.Root as={Fragment} show={isOpen}>
-			<Dialog as="div" className="relative z-50" onClose={handleClose}>
+			<Dialog as="div" className="relative z-50" onClose={onClose}>
 				<Transition.Child
 					as={Fragment}
 					enter="ease-out duration-300"
