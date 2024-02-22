@@ -7,6 +7,7 @@ const useAlbums = (delimeter: string) => {
 
 	useEffect(() => {
 		const fetchData = async () => {
+			setLoading(true);
 			try {
 				const values = await listAlbums(delimeter);
 
