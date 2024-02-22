@@ -11,7 +11,8 @@ import { useSearchParams } from "next/navigation";
 
 export default function Home() {
 	const tab = useSearchParams().get("tab") ?? "";
-	const polygon = useSearchParams().get("polygon") ?? 4;
+	const [polygon, setPolygon] = useState<number>(0);
+	const [classes, setClasses] = useState<number[]>([]);
 	const { albums, loading } = useAlbums(tab);
 	const [pageCount, setPageCount] = useState(1);
 	const startIndex = (pageCount - 1) * 54;
@@ -27,11 +28,26 @@ export default function Home() {
 		return coordinates;
 	}, []);
 
+	const newAlbum = useMemo(
+		() =>
+			classes.length
+				? albums
+						.filter((x) => x.photoText.length > polygon)
+						?.filter((y) => classes.includes(Number(y?.classes)))
+				: albums.filter((x) => x.photoText.length > polygon),
+		[albums, classes, polygon]
+	);
+
 	return (
 		<main className="min-h-screen ">
 			<div className="grid gap-x-10  lg:grid-cols-4 lg:px-8">
 				<div className="col-span-1 hidden lg:block border rounded-2xl px-4 py-3">
-					<SideCard />
+					<SideCard
+						polygon={polygon}
+						setPolygon={setPolygon}
+						classe={classes}
+						setClasses={setClasses}
+					/>
 				</div>
 				<div className="lg:col-span-3 ">
 					<div className="flex flex-col ">
@@ -42,12 +58,12 @@ export default function Home() {
 								</h1>
 								<div className="flex gap-x-1.5 text-base leading-5 font-bold">
 									<span>
-										{54 * pageCount > albums?.length
-											? albums?.length
+										{54 * pageCount > newAlbum?.length
+											? newAlbum?.length
 											: 54 * pageCount}
 									</span>
 									<span className="font-normal text-[#586A78]">0f</span>
-									<span>{albums?.length || 0}</span>
+									<span>{newAlbum?.length || 0}</span>
 									<span className="font-normal text-[#586A78]">images</span>
 								</div>
 							</div>
@@ -62,7 +78,7 @@ export default function Home() {
 						) : (
 							<>
 								<div className="grid grid-cols-3  lg:grid-cols-9 gap-2 mb-6">
-									{albums
+									{newAlbum
 										?.slice(startIndex, startIndex + 54)
 										?.map(({ photoKey, photoUrl, photoText, classes }: any) => (
 											<ImageCard
@@ -76,7 +92,7 @@ export default function Home() {
 								<div className="flex justify-center mb-5">
 									<Pagination
 										isLoading={loading}
-										pageCount={Math.ceil(albums?.length / 54) || 1}
+										pageCount={Math.ceil(newAlbum?.length / 54) || 1}
 										onPageChange={(val) => setPageCount(val)}
 										page={pageCount}
 									/>

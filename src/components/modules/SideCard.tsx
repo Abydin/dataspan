@@ -8,7 +8,12 @@ import { BinIcon } from "../icons";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
-type Props = {};
+type Props = {
+	polygon: number | null;
+	setPolygon: (val: number) => void;
+	classe: number[];
+	setClasses: (val: number[]) => void;
+};
 
 export const bones = [
 	{
@@ -48,12 +53,12 @@ export const bones = [
 	},
 ];
 
-export default function SideCard({}: Props) {
-	const searchParams = useSearchParams().get("polygon") ?? 4;
-	const classe = useSearchParams().get("class");
-
-	const router = useRouter();
-
+export default function SideCard({
+	polygon,
+	setPolygon,
+	classe,
+	setClasses,
+}: Props) {
 	return (
 		<div className="sticky top-8 h-[calc(100vh-4rem)] flex flex-col">
 			<div className="h-16 w-60 relative mb-8">
@@ -63,26 +68,40 @@ export default function SideCard({}: Props) {
 				<h2 className=" font-semibold text-sm">Classes filter</h2>
 			</div>
 			<div className="flex gap-x-4 mb-4">
-				<button className="font-normal text-sm leading-[14.63px] text-[#D1D1D6]">
+				<button
+					onClick={() => setClasses(bones.map((x) => Number(x.classes)))}
+					className="font-normal text-sm leading-[14.63px] text-[#D1D1D6]"
+				>
 					Select all
 				</button>
 				<Link href="/">
-					<button className="font-normal text-sm leading-[14.63px] text-[#2081D2]">
+					<button
+						onClick={() => {
+							setClasses([]);
+						}}
+						className="font-normal text-sm leading-[14.63px] text-[#2081D2]"
+					>
 						Deselect all
 					</button>
 				</Link>
 			</div>
 			<div className="flex flex-wrap gap-3 mb-5">
 				{bones.map(({ name, color, classes }) => (
-					<Link key={name} href={`?class=${classes}`}>
-						<Pill
-							active={classe !== null && Number(classe) === classes}
-							color={color}
-							className={`!text-[${color}]`}
-						>
-							{name}
-						</Pill>
-					</Link>
+					<Pill
+						active={classe.includes(Number(classes))}
+						color={color}
+						className={`!text-[${color}]`}
+						key={name}
+						onClick={() => {
+							const newVal = classe.includes(Number(classes))
+								? classe.filter((x) => x !== Number(classes))
+								: [...classe, Number(classes)];
+
+							setClasses(newVal);
+						}}
+					>
+						{name}
+					</Pill>
 				))}
 			</div>
 			<div className="mb-4">
@@ -99,17 +118,23 @@ export default function SideCard({}: Props) {
 				</div>
 				<div className="w-full mt-2">
 					<input
-						defaultValue={searchParams}
+						value={String(polygon)}
 						type="range"
 						className="w-full"
 						min={0}
 						max={4}
-						onChange={(e) => router.push(`?polygon=${e.target.value}`)}
+						onChange={(e) => setPolygon(Number(e.target.value))}
 					/>
 				</div>
 			</div>
 			<div className="flex items-center mt-4 justify-between">
-				<Link href="/" className="text-xs font-semibold">
+				<Link
+					href="/"
+					className="text-xs font-semibold"
+					onClick={() => {
+						setPolygon(0);
+					}}
+				>
 					<BinIcon className="inline-block mr-1" />
 					Clear Filters
 				</Link>
