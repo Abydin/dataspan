@@ -13,6 +13,8 @@ export const listAlbums = async (val: string) => {
 			})
 			.promise();
 
+		console.log({ data });
+
 		if (data.Contents && data.Contents.length > 0) {
 			return data.Contents.map((photo: any) => ({
 				photoKey: photo.Key,
