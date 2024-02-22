@@ -1,23 +1,24 @@
-import { Suspense } from "react";
 import classNames from "classnames";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
 
-type Props = {};
+type Props = {
+	tab: string;
+};
 
 const tabs = [
 	{
 		label: "All groups",
-		value: "/",
+		value: "",
 	},
 	{
 		label: "Train",
 		value: "train",
 	},
 	{
-		label: "Value",
-		value: "value",
+		label: "Valid",
+		value: "valid",
 	},
 	{
 		label: "Test",
@@ -25,12 +26,12 @@ const tabs = [
 	},
 ];
 
-export default function DashboardTabs({}: Props) {
+export default function DashboardTabs({ tab }: Props) {
 	const pathname = usePathname();
-	const tab = useSearchParams().get("tab") ?? "/";
+
 	return (
 		<>
-			{tabs.map(({ label, value }, idx) => (
+			{tabs.map(({ label, value }) => (
 				<Link
 					className={classNames(
 						"block w-max flex-shrink-0  px-6 py-2 text-sm font-medium leading-5 ",

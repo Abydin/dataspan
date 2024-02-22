@@ -2,24 +2,18 @@
 
 import ImageCard from "../components/modules/ImageCard";
 import { GlobalModals } from "../components/GlobalModal";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DashboardTabs from "../components/modules/DashboardTabs";
 import { Pagination } from "@ui";
 import { useAlbums } from "../hooks";
 import SideCard from "../components/modules/SideCard";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
-	const { albums, loading } = useAlbums();
+	const tab = useSearchParams().get("tab") ?? "";
+	const { albums, loading } = useAlbums(tab);
 	const [pageCount, setPageCount] = useState(1);
 	const startIndex = (pageCount - 1) * 54;
-	const myTime = localStorage.getItem("myTime") === "true";
-
-	useEffect(() => {
-		if (!myTime) {
-			localStorage.setItem("myTime", "true");
-			alert("spent 6hrs 30 min");
-		}
-	}, []);
 
 	return (
 		<main className="min-h-screen ">
@@ -36,7 +30,7 @@ export default function Home() {
 								</h1>
 								<div className="flex gap-x-1.5 text-base leading-5 font-bold">
 									<span>
-										{54 * pageCount > albums.length
+										{54 * pageCount > albums?.length
 											? albums?.length
 											: 54 * pageCount}
 									</span>
@@ -47,7 +41,7 @@ export default function Home() {
 							</div>
 						</div>
 						<div className=" flex mb-6">
-							<DashboardTabs />
+							<DashboardTabs tab={tab} />
 						</div>
 						{loading ? (
 							<div className="h-[50vh] flex justify-center items-center">
@@ -57,7 +51,7 @@ export default function Home() {
 							<>
 								<div className="grid grid-cols-3  lg:grid-cols-9 gap-2 mb-6">
 									{albums
-										.slice(startIndex, startIndex + 54)
+										?.slice(startIndex, startIndex + 54)
 										?.map(({ photoKey, photoUrl }) => (
 											<ImageCard
 												key={photoKey}
@@ -69,7 +63,7 @@ export default function Home() {
 								<div className="flex justify-center mb-5">
 									<Pagination
 										isLoading={loading}
-										pageCount={Math.ceil(albums.length / 54) || 1}
+										pageCount={Math.ceil(albums?.length / 54) || 1}
 										onPageChange={(val) => setPageCount(val)}
 										page={pageCount}
 									/>

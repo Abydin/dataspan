@@ -1,19 +1,27 @@
 import { s3 } from "./S3instance";
 
-export const listAlbums = async () => {
+export const listAlbums = async (val: string) => {
+	const albumBucketName = "dataspan.frontend-home-assignment";
+	var bucketUrl =
+		"https://s3.eu-central-1.amazonaws.com/" + albumBucketName + "/";
 	try {
 		const data: any = await s3
 			.listObjects({
-				Delimiter: "/",
+				Delimiter: val,
 				Bucket: "dataspan.frontend-home-assignment",
+				MaxKeys: 200,
 			})
 			.promise();
 
-		if (data.CommonPrefixes && data.CommonPrefixes.length > 0) {
-			const firstAlbumPrefix = decodeURIComponent(
-				data.CommonPrefixes[0]?.Prefix
+		if (data.Contents && data.Contents.length > 0) {
+			return data.Contents.map((photo: any) => ({
+				photoKey: photo.Key,
+				photoUrl: bucketUrl + encodeURIComponent(photo.Key),
+				...photo,
+			})).filter(
+				({ photoUrl }: { photoUrl: string }) =>
+					photoUrl.endsWith(".jpg") || photoUrl.endsWith(".png")
 			);
-			return firstAlbumPrefix;
 		} else {
 			console.log("No albums found.");
 		}
